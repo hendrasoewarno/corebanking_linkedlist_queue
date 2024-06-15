@@ -8,19 +8,20 @@ class Account:
         self.noac=noac
         self.nama=nama.upper()
         self.nik=nik
-        self.pin="123456"        
-        self.balance=0
+        self.__pin="123456"        
+        self.__balance=0
+        #masing-masing Account punya tabel transaksi masing2
         self.transaction = LinkedListTransaction()
 
     #tambahkan pemeriksaan amount > 0
     def deposit(self, cabang, amount):    
-        self.balance+=amount
+        self.__balance+=amount
         self.transaction.newTransaction(cabang, "12", amount)
         
     #tambahkan pemeriksaan amount > 0
     #tambahkan pemeriksaan setelah penarikan tidak boleh < dari minDeposit
     def withdraw(self, cabang, amount):
-        self.balance-=amount
+        self.__balance-=amount
         self.transaction.newTransaction(cabang, "21", amount)
 
     def show(self):
@@ -28,52 +29,43 @@ class Account:
         print("No.AC:", self.noac)
         print("Nama:", self.nama)
         print("NIK:", self.nik)
-        print("Amount:", f'{self.balance:,}')
+        print("Amount:", f'{self.__balance:,}')
 
     def print(self):
         print(self.noac.ljust(14), self.nama.ljust(50), self.nik.ljust(16))
 
-class AccountNode:
-    def __init__(self, account):
-        self.account=account
-        self.next = None
-
-class LinkedListAccount:
+class ArrayAccount:
     def __init__(self):
-        self.head=None
-        self.tail=None
+        self.array =[]
         self.count=0
         
     def newAccount(self,cabang, nik, nama):
         self.count+=1
         noac=cabang + str(self.count).rjust(4,"0")
         account=Account(noac, nama, nik)
-        newNode = AccountNode(account)
-        if not self.head:
-            self.head = newNode
-            self.tail = newNode
-        else:
-            self.tail.next = newNode
-            self.tail = newNode
+        self.array.append(account)        
         return account
             
+    #linear search
     def find(self, noac):
-        lastPosition = self.head
-        while lastPosition:
-            if lastPosition.account.noac==noac:
-                return lastPosition.account
-            lastPosition=lastPosition.next
+        lastPosition = 0
+        while lastPosition < self.count:
+            account=self.array[lastPosition]
+            if account.noac==noac:
+                return account
+            lastPosition+=1
         return None
         
     def list(self):
-        lastPosition=self.head
+        lastPosition=0
         print("\n\n>>DAFTAR ACCOUNT\n\n")
         print("-"*(80+3))
         print("No.AC".ljust(14),"Nama".ljust(50),"NIK".ljust(16))
         print("-"*(80+3))
-        while lastPosition:
-            lastPosition.account.print()
-            lastPosition=lastPosition.next
+        while lastPosition < self.count:
+            account=self.array[lastPosition]
+            account.print()
+            lastPosition+=1
 
 #unit test
 #12=Sumatera Utara, 71=Kota Medan, 11=Medan Johor, 01=Cabang 01, 01=Tabungan
@@ -88,12 +80,12 @@ class LinkedListAccount:
 #myAccount = savingAccount.find(account1.noac)
 #myAccount.show()
 #myAccount.deposit(cabang, 100000)
-#assert myAccount.balance==100000, "Error Deposit, new balance 100000 not match"
+#assert myAccount.__balance==100000, "Error Deposit, new balance 100000 not match"
 #myAccount.show()
 #myAccount.deposit(cabang, 100000)
-#assert myAccount.balance==100000, "Error Deposit, new balance 200000 not match"
+#assert myAccount.__balance==100000, "Error Deposit, new balance 200000 not match"
 #myAccount.show()
 #myAccount.withdraw(cabang, 100000)
-#assert myAccount.balance==100000, "Error Deposit, new balance 100000 not match"
+#assert myAccount.__balance==100000, "Error Deposit, new balance 100000 not match"
 #myAccount.show()
 #myAccount.transaction.list()
